@@ -1,0 +1,48 @@
+
+1) created new folder: 
+/etc/ssl/accesslab_certs/20170410
+
+2) created new certificate signing request (.csr) and private key:
+# cd /etc/ssl/accesslab_certs/20170410
+# openssl req -newkey rsa:2048 -nodes -keyout accessdxlab.com.key -out accessdxlab.com.csr
+(follow the prompts, US is the OU, TX is the state, AccessDX is the org)
+
+3) copy and paste accessdxlab.com.csr to GoDaddy's website to regenerate the TLS keypair.
+The URL is https://certs.godaddy.com/cert
+
+4) After verification, download the cert zipfile. Upload the zipfile to webserver.
+(from local laptop) 
+> scp accessdxlab_tls_new.zip root@webserver:/etc/ssl/accesslab_certs/20170410
+
+5) login to our webserver:
+# ssh root@webserver
+# cd /etc/ssl/accesslab_certs/20170410
+# unzip accessdxlab_tls_new.zip
+
+6) create the "intermediate" cert by copying gd_bundle-g2-g1.crt to intermediate.crt
+# cp gd_bundle-g2-g1.crt intermediate.crt
+
+7) create the domain cert from the second .crt file:
+# cp 39bb6f065576c8cc.crt accessdxlab.com.crt
+
+8) create a "chained cert" from these two certs:
+# cat accessdxlab.com.crt intermediate.crt > accessdxlab.com.chained.crt
+
+9) edit /etc/nginx/sites-enabled/default, add port 443 and paths to KEY and CERT files:
+
+# under the "server" paragraph, add (or modify, going forward) these lines:
+    listen 443 ssl;
+    server_name accessdxlab.com  www.accessdxlab.com;
+    ssl_certificate           /etc/ssl/accesslab_certs/20170410/accesssdxlab.com.chained.crt;
+    ssl_certificate_key  /etc/ssl/accesslab_certs/20170410/accessdxlab.com.key;
+
+10) bounce nginx:
+# service nginx restart
+
+11) test by viewing https://www.accessdxlab.com, or issuing the following command (from cygwin
+or an xterminal):
+# openssl s_client -connect www.accessdxlab.com:443
+
+Thanks,
+Scott
+
