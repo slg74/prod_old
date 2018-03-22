@@ -27,8 +27,8 @@ def get_switchport_details():
     em2_port = run_command("lldpcli show neighbors | grep -A6 em2 | awk '{NF} END {print $4}'")
 
 
-    print ("%sOK   - %s - Switch Name    - %s - %s." % (OK, hostname, "em1", em1_port.rstrip()))
-    print ("%sOK   - %s - Switch Name    - %s - %s." % (OK, hostname, "em2", em2_port.rstrip()))
+    print ("%sOK   - %s - Port    - %s - %s." % (OK, hostname, "em1", em1_port.rstrip()))
+    print ("%sOK   - %s - Port    - %s - %s." % (OK, hostname, "em2", em2_port.rstrip()))
 
     interface_switchport["em1"] = em1_port.split("/")[2]
     interface_switchport["em2"] = em2_port.split("/")[2]
