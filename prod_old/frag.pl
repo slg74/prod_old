@@ -11,7 +11,8 @@ sub get_frag_levels {
         open my $cmd, "mount|", or die "cannot issue command: $!";
         while (<$cmd>) {
                 my @line = split;
-                if ($_ =~ /storage0/) {
+		#$if ($_ =~ /storage0/) {
+                if ($_ =~ /boot/) {
                         my @data = split(' ', `xfs_db -c frag -r $line[0]`);
 			$data[6] =~ s/\s*\d+%$//;  # remove percent sign
                         push @device, $line[0];
@@ -42,17 +43,17 @@ sub check_mounted_volumes {
         close $cmd;
 
         # check production gen2 & gen3 mounted filesystems.
-        if ($type eq "production") {
-                if (($count == 6) or ($count == 9)) {
-                        print "OK\n";
-                        return "OK";
-                } else {
-                        #print_warning("check_mounted_volumes", "incorrect number of mounted filesystems");
-                        print "check_mounted_volumes :: incorrect number of mounted filesystems\n";
-                        print "FAIL\n";
-                        return "FAIL";
-                }
-        }
+	#if ($type eq "production") {
+        #        if (($count == 6) or ($count == 9)) {
+        #                print "OK\n";
+        #                return "OK";
+        #        } else {
+        #                #print_warning("check_mounted_volumes", "incorrect number of mounted filesystems");
+        #                print "check_mounted_volumes :: incorrect number of mounted filesystems\n";
+        #                print "FAIL\n";
+        #                return "FAIL";
+        #        }
+        #}
 }
 
 get_frag_levels();
